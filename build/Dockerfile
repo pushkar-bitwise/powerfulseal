@@ -26,6 +26,19 @@ COPY --from=builder /usr/local/lib/python3.7/site-packages /usr/local/lib/python
 # also copy over the executable helpers
 COPY --from=builder /usr/local/bin/powerfulseal /usr/local/bin/seal /usr/local/bin/
 # list the installed packages and their versions
+
+# Downloading gcloud package
+RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
+
+# Installing the package
+RUN mkdir -p /usr/local/gcloud \
+  && tar -C /usr/local/gcloud -xvf /tmp/google-cloud-sdk.tar.gz \
+  && /usr/local/gcloud/google-cloud-sdk/install.sh
+
+# Adding the package path to local
+ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
+
+
 RUN pip list
 
 ENTRYPOINT ["powerfulseal"]
